@@ -1,120 +1,126 @@
 <!doctype html>
 <html lang="en">
-<head>
-<title>Archive Telegram Index</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/flatly/bootstrap.min.css">
-<style>
-#spinner {
-  display: none;
-}
-</style>
+   <head>
+      <title>Archive Telegram Index</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/flatly/bootstrap.min.css">
+      <style>
+         #spinner {
+         display: none;
+         }
+      </style>
 </html>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container">
-    <a class="navbar-brand" href="#">TG Archive</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-      </ul>
+   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+         <a class="navbar-brand" href="/">TG Archive</a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+               <li class="nav-item active">
+                  <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="https://telegram.dog/ArchiveTGFilezBot">Telegram</a>
+               </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+               <input type="text" class="form-control mr-sm-2" id="search-input" placeholder="Search">
+               <button class="btn btn-outline-success my-2 my-sm-0" id="search-button">Search</button>
+            </form>
+         </div>
+      </div>
+   </nav>
+   <div class="container my-5">
       <form class="form-inline my-2 my-lg-0">
-        <input type="text" class="form-control mr-sm-2" id="search-input" placeholder="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" id="search-button">Search</button>
+         <input type="text" class="form-control form-control-lg mr-sm-2" id="search-input" placeholder="Search">
+         <button class="btn btn-outline-success my-2 my-sm-0" id="search-button">Search</button>
       </form>
-    </div>
-  </div>
-</nav>
-<div class="container my-5">
-  <div class="d-flex justify-content-center">
-    <div class="spinner-border" role="status" id="spinner">
-      <div class="spinner"></div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <ul class="list-group" id="data-list"></ul>
-    </div>
-  </div>
-</div>
-</div>
+      <div class="d-flex justify-content-center">
+         <div class="spinner-border" role="status" id="spinner">
+            <div class="spinner"></div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-12">
+            <ul class="list-group" id="data-list"></ul>
+         </div>
+      </div>
+   </div>
+   </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const ul = $("#data-list");
-const searchInput = $("#search-input");
-const searchButton = $("#search-button");
-const spinner = $("#spinner");
-
-ul.append(
-  "<li class='list-group-item text-center'>Search for a file to get started</li>"
-);
-searchButton.click(function (event) {
-  event.preventDefault();
-  spinner.show();
-  ul.empty();
-  $.ajax({
-    type: "GET",
-    url: `https://api.archive.telegram.zindex.eu.org/search?name=${searchInput.val()}`,
-    success: function (data) {
-      if (data.length === 0) {
-        ul.append("<li class='list-group-item'>No Results Found</li>");
-      } else {
-        for (const item of data) {
-          const li = $("<li class='text-break'></li>");
-          li.addClass("list-group-item");
-          const name = $("<a></a>");
-          name.text(`${item.name}`);
-          name.attr(
-            "href",
-            `https://archive.dltelegram.workers.dev/${item._id}`
-          );
-          name.css("float", "left");
-          name.css("width", "80%");
-          const size = $("<span></span>");
-          size.text(formatFileSize(item.size));
-          size.css("float", "right");
-          size.css("width", "10%");
-          li.append(name, size);
-          ul.append(li);
-        }
-      }
-    },
-    error: function (error) {
-      console.error(error);
-      ul.append(
-        "<li class='list-group-item'>An error occurred. Please try again later.</li>"
-      );
-    },
-    complete: function () {
-      spinner.hide();
-    }
-  });
-});
-
-function formatFileSize(bytes) {
-  if (bytes >= 1073741824) {
-    bytes = (bytes / 1073741824).toFixed(2) + " GB";
-  } else if (bytes >= 1048576) {
-    bytes = (bytes / 1048576).toFixed(2) + " MB";
-  } else if (bytes >= 1024) {
-    bytes = (bytes / 1024).toFixed(2) + " KB";
-  } else if (bytes > 1) {
-    bytes = bytes + " bytes";
-  } else if (bytes == 1) {
-    bytes = bytes + " byte";
-  } else {
-    bytes = "";
-  }
-  return bytes;
-}
+   const ul = $("#data-list");
+   const searchInput = $("#search-input");
+   const searchButton = $("#search-button");
+   const spinner = $("#spinner");
+   
+   ul.append(
+     "<li class='list-group-item text-center'>Search for a file to get started</li>"
+   );
+   searchButton.click(function (event) {
+     event.preventDefault();
+     spinner.show();
+     ul.empty();
+     $.ajax({
+       type: "GET",
+       url: `https://api.archive.telegram.zindex.eu.org/search?name=${searchInput.val()}`,
+       success: function (data) {
+         if (data.length === 0) {
+           ul.append("<li class='list-group-item'>No Results Found</li>");
+         } else {
+           for (const item of data) {
+             const li = $("<li class='text-break'></li>");
+             li.addClass("list-group-item");
+             const name = $("<a></a>");
+             name.text(`${item.name}`);
+             name.attr(
+               "href",
+               `https://archive.dltelegram.workers.dev/${item._id}`
+             );
+             name.css("float", "left");
+             name.css("width", "80%");
+             const size = $("<span></span>");
+             size.text(formatFileSize(item.size));
+             size.css("float", "right");
+             size.css("width", "10%");
+             li.append(name, size);
+             ul.append(li);
+           }
+         }
+       },
+       error: function (error) {
+         console.error(error);
+         ul.append(
+           "<li class='list-group-item'>An error occurred. Please try again later.</li>"
+         );
+       },
+       complete: function () {
+         spinner.hide();
+       }
+     });
+   });
+   
+   function formatFileSize(bytes) {
+     if (bytes >= 1073741824) {
+       bytes = (bytes / 1073741824).toFixed(2) + " GB";
+     } else if (bytes >= 1048576) {
+       bytes = (bytes / 1048576).toFixed(2) + " MB";
+     } else if (bytes >= 1024) {
+       bytes = (bytes / 1024).toFixed(2) + " KB";
+     } else if (bytes > 1) {
+       bytes = bytes + " bytes";
+     } else if (bytes == 1) {
+       bytes = bytes + " byte";
+     } else {
+       bytes = "";
+     }
+     return bytes;
+   }
 </script>
 </html>
