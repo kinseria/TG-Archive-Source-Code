@@ -35,6 +35,32 @@
     </div>
   </div>
 </nav>
+
+<div class="modal fade" id="myModal" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-break" id="myModalLongTitle">File Info</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-break">
+        <p>File ID: <span id="file-id"></span></p>
+        <p>Name: <span id="file-name"></span></p>
+        <p>Size: <span id="file-size"></span></p>
+        <p>Size in Bytes: <span id="file-bytes"></span></p>
+        <p>TG Unique ID: <span id="unique-id"></span></p>
+        <p>Type: <span id="file-type"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a href="" target="_blank" class="btn btn-primary active" id="download-link" role="button" aria-pressed="true">Download</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container my-5 search-box">
   <form class="form-inline">
     <input type="text" class="form-control  mr-sm-2 col-8" id="search-input" placeholder="Search">
@@ -84,11 +110,7 @@ searchButton.click(function (event) {
           const li = $("<li class='text-break'></li>");
           li.addClass("list-group-item");
           const name = $("<a></a>");
-          name.text(`${item.name}`);
-          name.attr(
-            "href",
-            `https://archive.dltelegram.workers.dev/${item._id}`
-          );
+          name.text(`${item._id}. ${item.name}`);
           name.css("float", "left");
           name.css("width", "80%");
           const size = $("<span></span>");
@@ -97,6 +119,24 @@ searchButton.click(function (event) {
           size.css("width", "10%");
           li.append(name, size);
           ul.append(li);
+
+          // Listen for click on list item
+          li.click(function () {
+            $("#myModal").modal("show");
+            // Update the content of the modal with the file information
+            document.getElementById("file-id").innerHTML = item._id;
+            document.getElementById("file-name").innerHTML = item.name;
+            document.getElementById("myModalLongTitle").innerHTML = item.name;
+            document.getElementById("file-size").innerHTML = formatFileSize(
+              item.size
+            );
+            document.getElementById("file-bytes").innerHTML = item.size;
+            document.getElementById("unique-id").innerHTML =
+              item.file_unique_id;
+            document.getElementById("file-type").innerHTML = item.mime_type;
+            document.getElementById("download-link").href =
+              "https://archive.dltelegram.workers.dev/" + item._id;
+          });
         }
       }
     },
