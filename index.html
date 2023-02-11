@@ -142,6 +142,8 @@ searchButton.click(function (event) {
                 `<a href="https://playvideos.pages.dev/?url=https://archive.dltelegram.workers.dev/` +
                 item._id +
                 `" target="_blank" class="btn btn-primary active" id="download-link" role="button" aria-pressed="true">Play Video</a>`;
+            } else {
+              document.getElementById("file-is-video").innerHTML = "";
             }
           });
         }
@@ -175,6 +177,5 @@ function formatFileSize(bytes) {
   }
   return bytes;
 }
-
 </script>
 </html>
