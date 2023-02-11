@@ -54,8 +54,9 @@
         <p>Type: <span id="file-type"></span></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <p id="file-is-video"></p>
         <a href="" target="_blank" class="btn btn-primary active" id="download-link" role="button" aria-pressed="true">Download</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -136,6 +137,12 @@ searchButton.click(function (event) {
             document.getElementById("file-type").innerHTML = item.mime_type;
             document.getElementById("download-link").href =
               "https://archive.dltelegram.workers.dev/" + item._id;
+            if (item.mime_type.includes("video")) {
+              document.getElementById("file-is-video").innerHTML =
+                `<a href="https://playvideos.pages.dev/?url=https://archive.dltelegram.workers.dev/` +
+                item._id +
+                `" target="_blank" class="btn btn-primary active" id="download-link" role="button" aria-pressed="true">Play Video</a>`;
+            }
           });
         }
       }
@@ -168,5 +175,6 @@ function formatFileSize(bytes) {
   }
   return bytes;
 }
+
 </script>
 </html>
